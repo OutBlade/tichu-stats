@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tichu · Statistik-Referenz</title>
+<style>
+  :root {
+    --bg0: #0d0f13;
+    --bg1: #13161d;
+    --bg2: #1a1e28;
+    --bg3: #222736;
+    --border: #2a3045;
+    --text: #c9d1e3;
+    --text-dim: #5a6480;
+    --text-muted: #3a4260;
+    --accent: #4fc3f7;
+    --accent2: #81d4fa;
+    --green: #4caf98;
+    --green-dim: #1d3d35;
+    --red: #ef5350;
+    --red-dim: #3d1d1d;
+    --amber: #ffb74d;
+    --amber-dim: #3d2d0d;
+    --purple: #b39ddb;
+    --mono: 'Courier New', 'Consolas', monospace;
+    --sans: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg0);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--bg1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #4fc3f7 0%, #81d4fa 100%);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 16px rgba(79,195,247,0.3);
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .dataset-badge {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid;
+  }
+
+  .badge-blue { border-color: var(--accent); color: var(--accent); background: rgba(79,195,247,0.07); }
+  .badge-green { border-color: var(--green); color: var(--green); background: rgba(76,175,152,0.07); }
+
+  /* ── NAV TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg1);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 32px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 12px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-num {
+    background: var(--bg3);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+  .tab.active .tab-num { background: rgba(79,195,247,0.15); color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 28px 32px;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    margin-top: 3px;
+    opacity: 0.7;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .container { padding: 20px 16px; }
+    header { padding: 14px 16px; }
+    .tabs { padding: 0 16px; }
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+  }
+
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .card-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .card-dot.green { background: var(--green); }
+  .card-dot.red { background: var(--red); }
+  .card-dot.amber { background: var(--amber); }
+  .card-dot.purple { background: var(--purple); }
+
+  .card-body { padding: 0; }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  thead tr { background: var(--bg3); }
+
+  th {
+    padding: 9px 14px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(42,48,69,0.6);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: rgba(79,195,247,0.03); }
+
+  th:not(:first-child), td:not(:first-child) {
+    text-align: right;
+  }
+
+  /* ── STAT CHIPS ── */
+  .val-green { color: var(--green); }
+  .val-red { color: var(--red); }
+  .val-amber { color: var(--amber); }
+  .val-blue { color: var(--accent); }
+  .val-purple { color: var(--purple); }
+  .val-dim { color: var(--text-dim); }
+
+  .chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+
+  .chip-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(76,175,152,0.3); }
+  .chip-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,83,80,0.3); }
+  .chip-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,183,77,0.3); }
+  .chip-blue { background: rgba(79,195,247,0.1); color: var(--accent); border: 1px solid rgba(79,195,247,0.25); }
+  .chip-purple { background: rgba(179,157,219,0.1); color: var(--purple); border: 1px solid rgba(179,157,219,0.25); }
+
+  /* ── BAR ── */
+  .bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+
+  .bar-blue { background: var(--accent); }
+  .bar-green { background: var(--green); }
+  .bar-red { background: var(--red); }
+  .bar-amber { background: var(--amber); }
+
+  .bar-val {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    min-width: 44px;
+    text-align: right;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+
+  .kpi {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi.blue::before { background: var(--accent); }
+  .kpi.green::before { background: var(--green); }
+  .kpi.red::before { background: var(--red); }
+  .kpi.amber::before { background: var(--amber); }
+  .kpi.purple::before { background: var(--purple); }
+
+  .kpi-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi.blue .kpi-value { color: var(--accent); }
+  .kpi.green .kpi-value { color: var(--green); }
+  .kpi.red .kpi-value { color: var(--red); }
+  .kpi.amber .kpi-value { color: var(--amber); }
+  .kpi.purple .kpi-value { color: var(--purple); }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    border-left: 3px solid var(--accent);
+    background: rgba(79,195,247,0.05);
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .insight.green { border-left-color: var(--green); background: rgba(76,175,152,0.05); }
+  .insight.red { border-left-color: var(--red); background: rgba(239,83,80,0.05); }
+  .insight.amber { border-left-color: var(--amber); background: rgba(255,183,77,0.05); }
+
+  .insight strong { color: #fff; }
+
+  /* ── COMPARE COL ── */
+  .col-head { color: var(--accent); }
+  .col-head2 { color: var(--green); }
+
+  /* ── RULE LIST ── */
+  .rule-list { list-style: none; padding: 14px 16px; }
+  .rule-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(42,48,69,0.5);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .rule-list li:last-child { border-bottom: none; }
+  .rule-arrow {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .rule-arrow.green { color: var(--green); }
+  .rule-arrow.red { color: var(--red); }
+  .rule-arrow.amber { color: var(--amber); }
+
+  /* ── FOOTER ── */
+  .source-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .source-note a { color: var(--text-dim); text-decoration: underline; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* ── TRIPLE COLOR CODING ── */
+  .tc-0 { color: #5a6480; }
+  .tc-1 { color: var(--amber); }
+  .tc-2 { color: #ff9800; }
+  .tc-3 { color: var(--red); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-block">
+    <div class="logo-icon">🀄</div>
+    <div>
+      <h1>Tichu · Statistik</h1>
+      <div class="header-sub">Referenztabellen für erfahrene Spieler</div>
+    </div>
+  </div>
+  <div class="dataset-badge">
+    <div class="badge badge-blue">BSW ~21M Runden</div>
+    <div class="badge badge-green">Gefiltert ~400K Runden</div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <div class="tab active" data-panel="p-bomben">
+    <span>💣</span> Bomben <span class="tab-num">1</span>
+  </div>
+  <div class="tab" data-panel="p-gt">
+    <span>🎯</span> Großes Tichu <span class="tab-num">2</span>
+  </div>
+  <div class="tab" data-panel="p-gt-rueckstand">
+    <span>📉</span> GT bei Rückstand <span class="tab-num">3</span>
+  </div>
+  <div class="tab" data-panel="p-schupf">
+    <span>🃏</span> Schupfkarten <span class="tab-num">4</span>
+  </div>
+  <div class="tab" data-panel="p-strassen">
+    <span>📏</span> Straßen <span class="tab-num">5</span>
+  </div>
+</nav>
+
+<!-- ═══════════════ PANEL 1: BOMBEN ═══════════════ -->
+<div class="container">
+
+<div class="panel active" id="p-bomben">
+  <div class="section-header">
+    <span class="section-num">PT.1</span>
+    <div>
+      <div class="section-title">Bomben</div>
+      <div class="section-desc">Wahrscheinlichkeiten, Werte und Schupfstrategien rund um Bomben — basierend auf dem gefilterten BSW-Datensatz.</div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi blue">
+      <div class="kpi-label">Bombe nach Schupfen</div>
+      <div class="kpi-value">11.8%</div>
+      <div class="kpi-sub">Gefiltert · 11.7% alle Spiele</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Bombe irgendwo</div>
+      <div class="kpi-value">38.3%</div>
+      <div class="kpi-sub">Mindestens eine Bombe pro Runde</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Gegner hat Bombe</div>
+      <div class="kpi-value">21.9%</div>
+      <div class="kpi-sub">Im gegnerischen Team</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">Erwarteter Gewinn</div>
+      <div class="kpi-value">90.7</div>
+      <div class="kpi-sub">Pkt. mit eigener Bombe (gefiltert)</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">GT-Zerstörungsrate</div>
+      <div class="kpi-value">38.2%</div>
+      <div class="kpi-sub">Gegner-Bombe vs. Großes Tichu</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+
+    <!-- Bombenwahrscheinlichkeit -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot blue"></div>
+        <span class="card-title">Bombenwahrscheinlichkeit</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Situation</th>
+              <th class="col-head">Alle (*)</th>
+              <th class="col-head2">Gefiltert (**)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Erste 8 Karten</td>
+              <td>~0.3%</td>
+              <td>~0.3%</td>
+            </tr>
+            <tr>
+              <td>Erste 14 Karten</td>
+              <td>~5.1%</td>
+              <td>~5.1%</td>
+            </tr>
+            <tr>
+              <td>Nach Schupfen (gesamt)</td>
+              <td><span class="chip chip-blue">11.7%</span></td>
+              <td><span class="chip chip-green">11.8%</span></td>
+            </tr>
+            <tr>
+              <td>→ davon 4er-Bombe</td>
+              <td>8.57%</td>
+              <td>8.68%</td>
+            </tr>
+            <tr>
+              <td>→ davon Straßen-Bombe</td>
+              <td>3.30%</td>
+              <td>3.32%</td>
+            </tr>
+            <tr>
+              <td>Gegner-Team hat Bombe</td>
+              <td>21.7%</td>
+              <td><span class="chip chip-amber">21.9%</span></td>
+            </tr>
+            <tr>
+              <td>Mindestens eine Bombe</td>
+              <td>37.9%</td>
+              <td><span class="chip chip-amber">38.3%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sonderfälle -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot amber"></div>
+        <span class="card-title">Gegner-Bombe: Sonderfälle</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Bedingung</th>
+              <th class="col-head">(*)</th>
+              <th class="col-head2">(**)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Du hast Bombe</td>
+              <td>25.7%</td>
+              <td>25.7%</td>
+            </tr>
+            <tr>
+              <td>Du hast Tichu angesagt</td>
+              <td>22.7%</td>
+              <td>23.0%</td>
+            </tr>
+            <tr>
+              <td>Tichu angesagt, keine eigene Bombe</td>
+              <td>21.7%</td>
+              <td>22.4%</td>
+            </tr>
+            <tr>
+              <td>Small Tichu angesagt</td>
+              <td>28.4%</td>
+              <td>28.5%</td>
+            </tr>
+            <tr>
+              <td>Großes Tichu angesagt</td>
+              <td>21.7%</td>
+              <td>21.1%</td>
+            </tr>
+            <tr>
+              <td>Small Tichu + ≤2 Ass-Karten</td>
+              <td class="val-red">40.1%</td>
+              <td class="val-red">39.8%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight amber" style="margin:0; border-radius:0; border-left-width:3px; border-top:1px solid rgba(42,48,69,0.6)">
+          Small Tichu mit wenig Hochkarten → fast <strong>doppelt so hohes</strong> Bombe-Risiko wie beim GT.
+        </div>
+      </div>
+    </div>
+
+    <!-- Drillinge-Korrelation -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot purple"></div>
+        <span class="card-title">Eigene Drillinge → Bombe</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Drillinge</th>
+              <th>P(eigene Bombe)</th>
+              <th>P(Gegner-Bombe)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tc-0">0 Drillinge</td>
+              <td class="tc-0">3.1% / 2.5%</td>
+              <td class="tc-0">20.7%</td>
+            </tr>
+            <tr>
+              <td class="tc-1">1 Drilling</td>
+              <td class="tc-1">15.8% / 14.2%</td>
+              <td class="tc-1">~22%</td>
+            </tr>
+            <tr>
+              <td class="tc-2">2 Drillinge</td>
+              <td class="tc-2">28.4% / 26.6%</td>
+              <td class="tc-2">~25%</td>
+            </tr>
+            <tr>
+              <td class="tc-3">3+ Drillinge</td>
+              <td class="tc-3">41.5% / 41.5%</td>
+              <td class="tc-3">30.5%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight" style="margin:0; border-radius:0; border-top:1px solid rgba(42,48,69,0.6); border-left-color:var(--purple); background:rgba(179,157,219,0.05)">
+          <strong>Mehr eigene Drillinge</strong> = höhere Chance auf eigene UND Gegnerbombe. Drillinge sind ein starker Indikator.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bomben-Werte -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot green"></div>
+        <span class="card-title">Bombenwert & Auswirkungen</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Metrik</th><th class="col-head">(*)</th><th class="col-head2">(**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Erwarteter Rundengewinn (Team hat Bombe)</td>
+              <td>70.5 Pkt.</td>
+              <td class="val-green">90.7 Pkt.</td>
+            </tr>
+            <tr>
+              <td>GT-Zerstörungsrate durch Gegner-Bombe</td>
+              <td class="val-red">41.8%</td>
+              <td class="val-red">38.2%</td>
+            </tr>
+            <tr>
+              <td>Small Tichu-Zerstörungsrate</td>
+              <td class="val-red">51.4%</td>
+              <td class="val-red">47.3%</td>
+            </tr>
+            <tr>
+              <td>Small Tichu-Ansagerate mit eigener Bombe</td>
+              <td>23.7%</td>
+              <td>21.6%</td>
+            </tr>
+            <tr>
+              <td>Small Tichu-Erfolgsrate mit eigener Bombe</td>
+              <td class="val-green">79.3%</td>
+              <td class="val-green">79.4%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Schupfstrategie Bomben -->
+  <div class="section-header" style="margin-top:8px">
+    <span class="section-num">PT.1.2</span>
+    <div>
+      <div class="section-title" style="font-size:16px">Schupfstrategie & Bombenrisiko</div>
+      <div class="section-desc">Wie die Schupfstrategie die Bombenwahrscheinlichkeit beeinflusst.</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div class="card-dot green"></div><span class="card-title">Gerade-Rechts / Ungerade-Links</span></div>
+      <div class="card-body">
+        <ul class="rule-list">
+          <li><span class="rule-arrow green">↓</span> <div>Gegner-Bombenrisiko auf <strong>20.3% / 20.7%</strong> (Baseline: 21.7%)</div></li>
+          <li><span class="rule-arrow green">→</span> <div>Herkunft: 9.1% aus Hand, 4.1% vom Partner, 6.8% Partner+Gegner, 0.3% alle drei</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-dot red"></div><span class="card-title">Keine Strategie</span></div>
+      <div class="card-body">
+        <ul class="rule-list">
+          <li><span class="rule-arrow red">↑</span> <div>Gegner-Bombenrisiko auf <strong>27.9% / 28.1%</strong> — deutlich höher</div></li>
+          <li><span class="rule-arrow red">!</span> <div>Partner+Gegner-Kombination: <strong>10.9–11.8%</strong> (vs. 6.8% mit Strategie)</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-dot amber"></div><span class="card-title">Alternative: Klein/Groß-Strategie</span></div>
+      <div class="card-body">
+        <ul class="rule-list">
+          <li><span class="rule-arrow green">→</span> <div>Bombenrisiko: <strong>21.1% / 21.4%</strong> — ähnlich wie Baseline</div></li>
+          <li><span class="rule-arrow green">+</span> <div>Positiver Erwartungswert: <strong>+2.5 / +3.1 Pkt.</strong></div></li>
+          <li><span class="rule-arrow amber">!</span> <div>Nur-Paare-Strategie: Risiko auf <strong>16.3%</strong> aber <strong>−9.6 Pkt.</strong> Erwartung</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PANEL 2: GROSSES TICHU ═══════════════ -->
+<div class="panel" id="p-gt">
+  <div class="section-header">
+    <span class="section-num">PT.2</span>
+    <div>
+      <div class="section-title">Großes Tichu</div>
+      <div class="section-desc">Wann lohnt sich das Große Tichu? Ansageraten, Erfolgsquoten und Opportunitätskosten nach Handstärke.</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <strong>Kernerkenntnis:</strong> Die Faustregel "GT bei 50% Erfolgswahrscheinlichkeit" ist irreführend. Entscheidend sind die <strong>Opportunitätskosten</strong> — was man ohne GT-Ansage erwarten kann. Bei schwachen Händen ist ein GT auch mit 36% Erfolgsquote negativ!
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi blue">
+      <div class="kpi-label">Schwächste Hand (0 Asse, kein Sonder)</div>
+      <div class="kpi-value">1.57%</div>
+      <div class="kpi-sub">Ansagerate gefiltert · Erfolg: 34.5%</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Starke Hand (0 Asse, Drache+Phönix)</div>
+      <div class="kpi-value">82.6%</div>
+      <div class="kpi-sub">Ansagerate gefiltert · Erfolg: 74.5%</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Beste Hand (2 Asse, Drache+Phönix)</div>
+      <div class="kpi-value">96.5%</div>
+      <div class="kpi-sub">Ansagerate gefiltert · Erfolg: 83.4%</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-dot blue"></div><span class="card-title">Ansagerate &amp; Erfolg nach Handklasse</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Hand</th>
+              <th>Ansage (*)</th>
+              <th>Ansage (**)</th>
+              <th>Erfolg (*)</th>
+              <th>Erfolg (**)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0 Asse, kein Sonder</td>
+              <td class="val-dim">0.89%</td>
+              <td class="val-dim">1.57%</td>
+              <td class="val-red">36.8%</td>
+              <td class="val-red">34.5%</td>
+            </tr>
+            <tr>
+              <td>1 Ass, kein Sonder</td>
+              <td class="val-dim">~3%</td>
+              <td class="val-dim">~5%</td>
+              <td class="val-amber">~48%</td>
+              <td class="val-amber">~46%</td>
+            </tr>
+            <tr>
+              <td>2 Asse, kein Sonder</td>
+              <td>~10%</td>
+              <td>~15%</td>
+              <td class="val-amber">~58%</td>
+              <td class="val-amber">~56%</td>
+            </tr>
+            <tr>
+              <td>0 Asse, Drache+Phönix</td>
+              <td class="val-green">51.5%</td>
+              <td class="val-green">82.6%</td>
+              <td class="val-green">75.3%</td>
+              <td class="val-green">74.5%</td>
+            </tr>
+            <tr>
+              <td>1 Ass, Drache+Phönix</td>
+              <td class="val-green">~65%</td>
+              <td class="val-green">~90%</td>
+              <td class="val-green">~79%</td>
+              <td class="val-green">~78%</td>
+            </tr>
+            <tr>
+              <td>2 Asse, Drache+Phönix</td>
+              <td class="val-green">77.8%</td>
+              <td class="val-green">96.5%</td>
+              <td class="val-green">83.8%</td>
+              <td class="val-green">83.4%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight" style="margin:0;border-radius:0;border-top:1px solid rgba(42,48,69,0.6)">
+          Das Kategorisierungsschema: <strong>5 Ass-Stufen × 16 Sonderkarten-Kombis</strong> = 80 Handklassen. Der Hund in den ersten 8 Karten wirkt <em>negativ</em> auf den GT-Wert.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-dot red"></div><span class="card-title">Opportunitätskosten (Pkt.-Differenz)</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Hand</th>
+              <th>Opport.-Kosten (*)</th>
+              <th>Opport.-Kosten (**)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0 Asse, kein Sonder</td>
+              <td class="val-red">−72 bis −88 Pkt.</td>
+              <td class="val-red">sehr negativ</td>
+            </tr>
+            <tr>
+              <td>1 Ass, kein Sonder</td>
+              <td class="val-red">−48 bis −66 Pkt.</td>
+              <td class="val-red">negativ</td>
+            </tr>
+            <tr>
+              <td>2 Asse, kein Sonder</td>
+              <td class="val-amber">~−20 Pkt.</td>
+              <td class="val-amber">leicht negativ</td>
+            </tr>
+            <tr>
+              <td>0 Asse, Drache+Phönix</td>
+              <td class="val-green">+47 bis +29 Pkt.</td>
+              <td class="val-green">klar positiv</td>
+            </tr>
+            <tr>
+              <td>2 Asse, Drache+Phönix</td>
+              <td class="val-green">+70 bis +52 Pkt.</td>
+              <td class="val-green">sehr positiv</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="divider" style="margin:0"></div>
+
+        <div class="card-header" style="border-top:none; border-bottom:1px solid var(--border)">
+          <div class="card-dot amber"></div>
+          <span class="card-title">Strategievergleich: GT-Ansagerate</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Strategie</th><th>Rate (*)</th><th>Rate (**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Asse + Joker (klassisch)</td>
+              <td>12.69%</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Opportunitätskosten ≥ 0</td>
+              <td>14.23%</td>
+              <td class="val-green">7.69%</td>
+            </tr>
+            <tr>
+              <td>Opportunitätskosten ≥ 10</td>
+              <td>12.22%</td>
+              <td class="val-green">3.57%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight green" style="margin:0;border-radius:0;border-top:1px solid rgba(42,48,69,0.6)">
+          Erfahrene Spieler sagen GT <strong>deutlich seltener</strong> an als der Datensatz insgesamt — sie wählen sehr selektiv.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-header"><div class="card-dot amber"></div><span class="card-title">GT-Entscheidungsregeln (Zusammenfassung)</span></div>
+    <ul class="rule-list">
+      <li><span class="rule-arrow green">✓</span> <div><strong>GT sagen:</strong> Hand hat Drache UND Phönix in den ersten 8 Karten → nahezu immer positiv</div></li>
+      <li><span class="rule-arrow green">✓</span> <div><strong>GT sagen:</strong> 2+ Asse in ersten 8 Karten + mindestens ein Joker → meist positiv</div></li>
+      <li><span class="rule-arrow red">✗</span> <div><strong>GT meiden:</strong> 0 Asse, keine Sonderkarten → Opportunitätskosten −72 bis −88 Punkte, katastrophal</div></li>
+      <li><span class="rule-arrow red">✗</span> <div><strong>GT meiden:</strong> Hund in den ersten 8 Karten → verringert Doppelsieg-Wahrscheinlichkeit</div></li>
+      <li><span class="rule-arrow amber">!</span> <div><strong>Nicht nur Erfolgsrate beachten:</strong> 50% Erfolg kann trotzdem negativ sein, wenn man ohne GT 60+ Pkt. erwartete</div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ PANEL 3: GT BEI RÜCKSTAND ═══════════════ -->
+<div class="panel" id="p-gt-rueckstand">
+  <div class="section-header">
+    <span class="section-num">PT.2.2</span>
+    <div>
+      <div class="section-title">Großes Tichu bei Rückstand</div>
+      <div class="section-desc">Ab welchem Rückstand lohnt GT mit jeder Hand? Analyse der letzten Runde.</div>
+    </div>
+  </div>
+
+  <div class="insight amber">
+    <strong>Methodischer Hinweis:</strong> Die Wahrscheinlichkeiten wurden auf dem Gesamtdatensatz ausgewertet, nicht nur in der letzten Runde. Erfahrene Spieler verhalten sich in Schlussrunden möglicherweise anders — die Werte sind als Orientierung zu verstehen.
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-dot red"></div><span class="card-title">GT bei Rückstand: Schwellenwerte</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Rückstand (p)</th><th>Empfehlung</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>+50 Punkte</strong> (Vorsprung)</td>
+              <td class="val-green">GT fast nie sinnvoll</td>
+            </tr>
+            <tr>
+              <td>0 Punkte (Gleichstand)</td>
+              <td class="val-amber">Nur mit sehr starker Hand</td>
+            </tr>
+            <tr>
+              <td>−100 Punkte</td>
+              <td class="val-amber">Selektiv: nur Top-Hände</td>
+            </tr>
+            <tr>
+              <td>−200 Punkte</td>
+              <td class="val-red">Breiter GT-Einsatz sinnvoll</td>
+            </tr>
+            <tr>
+              <td><strong>−305 Punkte</strong></td>
+              <td class="val-red">GT mit jeder Hand sinnvoll</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-dot amber"></div><span class="card-title">Logik des Verzweiflungs-GT</span></div>
+      <ul class="rule-list">
+        <li><span class="rule-arrow amber">!</span><div>Bei −305 Punkten ist ein normales Spiel fast hoffnungslos — jede Hand rechtfertigt GT, weil der Status quo verloren ist.</div></li>
+        <li><span class="rule-arrow green">→</span><div>Der Break-Even-Rückstand variiert je nach Handklasse: starke Hände früher, schwache erst bei maximalem Rückstand.</div></li>
+        <li><span class="rule-arrow blue">→</span><div>Die 80 Handklassen (Asse × Sonderkarten) helfen, den richtigen Schwellenwert für die eigene Hand zu bestimmen.</div></li>
+        <li><span class="rule-arrow red">!</span><div>Bei Vorsprung (+50 Pkt.) lohnt GT mit keiner Hand — man riskiert unnötig den Sieg.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-header"><div class="card-dot blue"></div><span class="card-title">Rückstand-Schwelle nach Handstärke (Schätzwerte)</span></div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr><th>Handklasse</th><th>GT sinnvoll ab Rückstand von...</th><th>Tendenz</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Beste Hände (2+ Asse, Drache+Phönix)</td>
+            <td class="val-green">Schon bei ausgeglichenem Stand</td>
+            <td><span class="chip chip-green">immer prüfen</span></td>
+          </tr>
+          <tr>
+            <td>Starke Hände (1 Ass + 1 Joker)</td>
+            <td class="val-amber">ca. −100 bis −150 Pkt.</td>
+            <td><span class="chip chip-amber">situativ</span></td>
+          </tr>
+          <tr>
+            <td>Mittlere Hände (0-1 Asse, 1 Joker)</td>
+            <td class="val-amber">ca. −200 bis −250 Pkt.</td>
+            <td><span class="chip chip-amber">nur bei Rückstand</span></td>
+          </tr>
+          <tr>
+            <td>Schwache Hände (0 Asse, kein Joker)</td>
+            <td class="val-red">ca. −305 Pkt. oder mehr</td>
+            <td><span class="chip chip-red">Verzweiflungs-GT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PANEL 4: SCHUPFKARTEN ═══════════════ -->
+<div class="panel" id="p-schupf">
+  <div class="section-header">
+    <span class="section-num">PT.4</span>
+    <div>
+      <div class="section-title">Schupfkarten</div>
+      <div class="section-desc">Welche Karten werden gegeben? Auswirkungen des Hundes und des Mahjong. Partner-Ass-Korrelationen.</div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi red">
+      <div class="kpi-label">Hund → Gegner (Erwartungswert)</div>
+      <div class="kpi-value">−25.7</div>
+      <div class="kpi-sub">Punkte Verlust (gefiltert)</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Doppelsieg-Rate mit Hund → Gegner</div>
+      <div class="kpi-value">17.4%</div>
+      <div class="kpi-sub">Gefiltert (Baseline: 11.3%)</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Mahjong → Gegner (Erwartungswert)</div>
+      <div class="kpi-value">−5.3</div>
+      <div class="kpi-sub">Punkte Verlust (gefiltert)</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">Ass an Partner (Basis)</div>
+      <div class="kpi-value">18.7%</div>
+      <div class="kpi-sub">Gefiltert · wenn Ass einzige Hochkarte: 59.9%</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-dot red"></div><span class="card-title">Der Hund: Auswirkungen</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Szenario</th><th>(*)</th><th>(**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hund → Gegner</strong> (Normalfall)</td>
+              <td colspan="2" style="text-align:center"></td>
+            </tr>
+            <tr>
+              <td>→ Erwartungsw. Runde</td>
+              <td class="val-red">−21.8 Pkt.</td>
+              <td class="val-red">−25.65 Pkt.</td>
+            </tr>
+            <tr>
+              <td>→ Doppelsieg-Rate</td>
+              <td>16.4%</td>
+              <td class="val-green">17.4%</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="padding:4px 14px; font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em">Baseline (kein Hund-Schupf):</td>
+            </tr>
+            <tr>
+              <td>→ Doppelsieg-Rate</td>
+              <td class="val-dim">11.8%</td>
+              <td class="val-dim">11.3%</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="padding:4px 14px; font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em">Hund gegen GT-Ansager:</td>
+            </tr>
+            <tr>
+              <td>→ GT-Erfolgsrate (ohne Hund)</td>
+              <td>61.8%</td>
+              <td>59.2%</td>
+            </tr>
+            <tr>
+              <td>→ GT-Erfolgsrate (mit Hund → Gegner)</td>
+              <td class="val-amber">58.3%</td>
+              <td class="val-amber">55.9%</td>
+            </tr>
+            <tr>
+              <td>→ Doppelsieg mit Hund vs. GT</td>
+              <td class="val-green">22.5%</td>
+              <td class="val-green">21.1%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-dot green"></div><span class="card-title">Hund-Schupf-Verhalten bei GT-Ansage</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Situation</th><th>(*)</th><th>(**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GT-Ansager hat Hund in ersten 14 Karten → schupft an Partner</td>
+              <td>78.1%</td>
+              <td>74.5%</td>
+            </tr>
+            <tr>
+              <td>Resultierende Doppelsieg-Rate</td>
+              <td class="val-red">11.1%</td>
+              <td class="val-red">10.9%</td>
+            </tr>
+            <tr>
+              <td>Gegner schupft Hund an Ansager (Ansager fehlt Hund)</td>
+              <td>40.6%</td>
+              <td>32.3%</td>
+            </tr>
+            <tr>
+              <td>Hund → Ansager: Erwarteter Gewinn</td>
+              <td class="val-green">+53.3 Pkt.</td>
+              <td class="val-green">+40.1 Pkt.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight green" style="margin:0;border-radius:0;border-top:1px solid rgba(42,48,69,0.6)">
+          <strong>Hund an GT-Ansager schupfen</strong> ist einer der stärksten Züge im Spiel: +40–53 Punkte Erwartungswert.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-dot amber"></div><span class="card-title">Ass-Schupf-Korrelationen</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Ass-Situation</th><th>(*)</th><th>(**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basis: Partner schupft Ass</td>
+              <td>19.2%</td>
+              <td>18.7%</td>
+            </tr>
+            <tr>
+              <td>Ass ist einzige Hochkarte → Partner schupft es</td>
+              <td class="val-green">53.1%</td>
+              <td class="val-green">59.9%</td>
+            </tr>
+            <tr>
+              <td>Du erhältst Ass → Partner hat noch eines</td>
+              <td>30.8%</td>
+              <td>27.2%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-dot blue"></div><span class="card-title">Allgemeine Schupf-Muster</span></div>
+      <ul class="rule-list">
+        <li><span class="rule-arrow green">→</span><div>BSW-Spieler folgen mehrheitlich <strong>Gerade-Rechts / Ungerade-Links</strong>-Strategie</div></li>
+        <li><span class="rule-arrow green">→</span><div>Bessere Spieler zeigen dieses Muster noch deutlicher ausgeprägt</div></li>
+        <li><span class="rule-arrow green">✓</span><div>Gute Spieler geben den Hund seltener an Gegner und öfter an Partner</div></li>
+        <li><span class="rule-arrow blue">!</span><div>Den Mahjong schupfen fast nie — er ist zu wertvoll als Eröffnungskontrolle</div></li>
+        <li><span class="rule-arrow amber">!</span><div>Bei GT-Ansage eines Gegners: In über 70% der Fälle kommt eine Premium-Karte vom Partner</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PANEL 5: STRASSEN ═══════════════ -->
+<div class="panel" id="p-strassen">
+  <div class="section-header">
+    <span class="section-num">PT.3</span>
+    <div>
+      <div class="section-title">Straßen</div>
+      <div class="section-desc">Risikoanalyse für Straßen-Spiel: Überbietungswahrscheinlichkeiten, Vervollständigungschancen und Längenverteilung.</div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi red">
+      <div class="kpi-label">5er-Straße überboten</div>
+      <div class="kpi-value">36.4%</div>
+      <div class="kpi-sub">Gefiltert · inkl. Bomben: ~29.5%</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Rundenrisiko (Tichu + überboten)</div>
+      <div class="kpi-value">29.5%</div>
+      <div class="kpi-sub">Gefiltert · bei 4-Q Straße</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">3-4-5-6 → 5er vervollständigt</div>
+      <div class="kpi-value">59.3%</div>
+      <div class="kpi-sub">Gefiltert · beste offene 4er-Straße</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot red"></div>
+        <span class="card-title">Eröffnung mit Straße: Überbietungsrisiko</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Straßenlänge</th><th class="col-head">Alle (*)</th><th class="col-head2">Gefiltert (**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5 Karten</td>
+              <td>
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill bar-red" style="width:36.79%"></div></div>
+                  <span class="bar-val val-red">36.79%</span>
+                </div>
+              </td>
+              <td class="val-red">36.36%</td>
+            </tr>
+            <tr>
+              <td>6 Karten</td>
+              <td>
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill bar-amber" style="width:23.86%"></div></div>
+                  <span class="bar-val val-amber">23.86%</span>
+                </div>
+              </td>
+              <td class="val-amber">23.18%</td>
+            </tr>
+            <tr>
+              <td>7 Karten</td>
+              <td>
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill bar-amber" style="width:15.48%"></div></div>
+                  <span class="bar-val val-amber">15.48%</span>
+                </div>
+              </td>
+              <td class="val-amber">14.65%</td>
+            </tr>
+            <tr>
+              <td>8 Karten</td>
+              <td>
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill bar-green" style="width:9.75%"></div></div>
+                  <span class="bar-val val-green">9.75%</span>
+                </div>
+              </td>
+              <td class="val-green">8.74%</td>
+            </tr>
+            <tr>
+              <td>9 Karten</td>
+              <td>
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill bar-green" style="width:6.06%"></div></div>
+                  <span class="bar-val val-green">6.06%</span>
+                </div>
+              </td>
+              <td class="val-green">5.25%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight red" style="margin:0;border-radius:0;border-top:1px solid rgba(42,48,69,0.6)">
+          <strong>Tichu-Ansage mit 5er-Straße ist hochriskant:</strong> Bei ~36% Überbietungsrisiko + Bomben-Risiko liegt das Gesamtverlustrisiko bei fast 30%.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot green"></div>
+        <span class="card-title">4er-Straßen: Vervollständigung nach Schupfen</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>4er-Straße</th><th class="col-head">→ 5er (*)</th><th class="col-head2">→ 5er (**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="chip chip-green">1-2-3-4</span> → 1-2-3-4-5</td>
+              <td class="val-amber">25.6%</td>
+              <td class="val-amber">25.7%</td>
+            </tr>
+            <tr>
+              <td><span class="chip chip-green">3-4-5-6</span> → beliebige 5er</td>
+              <td class="val-green">59.6%</td>
+              <td class="val-green">59.3%</td>
+            </tr>
+            <tr>
+              <td><span class="chip chip-green">4-5-6-7</span> → beliebige 5er</td>
+              <td class="val-green">50.2%</td>
+              <td class="val-green">50.6%</td>
+            </tr>
+            <tr>
+              <td><span class="chip chip-red">J-Q-K-A</span> → beliebige 5er</td>
+              <td class="val-red">12.8%</td>
+              <td class="val-red">12.7%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="insight green" style="margin:0;border-radius:0;border-top:1px solid rgba(42,48,69,0.6)">
+          <strong>Offene Mitte</strong> (3-4-5-6, 4-5-6-7) = bestes Potenzial. <strong>Einseitig oben</strong> (J-Q-K-A) = nur ~13% Chance.
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1">
+      <div class="card-header"><div class="card-dot amber"></div><span class="card-title">Risiko-Zusammenfassung: Tichu mit Straße ansagen</span></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Metrik</th><th class="col-head">Alle (*)</th><th class="col-head2">Gefiltert (**)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>4-Q Straße durch höhere Straße überboten</td>
+              <td class="val-red">18.98%</td>
+              <td class="val-red">18.88%</td>
+            </tr>
+            <tr>
+              <td>Gesamtverlustrisiko (inkl. Bomben, bei Tichu)</td>
+              <td class="val-red">30.15%</td>
+              <td class="val-red">29.47%</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul class="rule-list">
+          <li><span class="rule-arrow red">!</span><div><strong>Fast 1 von 3 Runden</strong> mit Tichu-Ansage und Straßenspieler endet im Misserfolg durch Überbieten oder Bombe</div></li>
+          <li><span class="rule-arrow green">✓</span><div>Ab 7+ Karten Straße sinkt das Überbietungsrisiko unter 15% — deutlich akzeptableres Terrain</div></li>
+          <li><span class="rule-arrow amber">→</span><div>Kombiniere Straßenspiel nur mit Tichu, wenn Straße ≥7 Karten oder starke Backup-Kombinationen vorhanden</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="source-note">
+  Datenquelle: BrettSpielWelt (BSW) · Analyse: <a href="https://fabianvdw.github.io/" target="_blank">fabianvdw.github.io</a> · Gefilterter Datensatz: ~400.000 Runden von Spielern mit &gt;100 Partien &amp; ≥55% Winrate · (*) = alle ~21M Runden · (**) = gefilterter Datensatz
+</div>
+
+</div><!-- /container -->
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+    });
+  });
+
+  // Animate bars on load and tab switch
+  function animateBars() {
+    document.querySelectorAll('.bar-fill').forEach(bar => {
+      const target = bar.style.width;
+      bar.style.width = '0%';
+      requestAnimationFrame(() => {
+        setTimeout(() => { bar.style.width = target; }, 50);
+      });
+    });
+  }
+
+  animateBars();
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => setTimeout(animateBars, 50));
+  });
+</script>
+</body>
+</html>
