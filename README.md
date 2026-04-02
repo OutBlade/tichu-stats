@@ -1,6 +1,8 @@
 # Tichu Statistik - Referenzseite für erfahrene Spieler
 
 **Live Demo:** [https://outblade.github.io/tichu-stats/](https://outblade.github.io/tichu-stats/)
+<img width="1902" height="934" alt="image" src="https://github.com/user-attachments/assets/d743fa24-3697-4058-99d6-2876afffb198" />
+
 
 Eine interaktive Statistik-Referenzseite für Tichu-Spieler, basierend auf einem gefilterten Datensatz von ~400.000 Runden erfahrener BSW-Spieler (>100 Partien, ≥55% Winrate). Alle Daten stammen aus der Analyse von [fabianvdw.github.io](https://fabianvdw.github.io/).
 
